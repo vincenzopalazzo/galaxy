@@ -1,0 +1,9 @@
+[package]
+name = "galaxy_plugin"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+juniper = { version = "0.15.10", default-features = false }
+juniper_rocket = "0.8.2"
+rocket = { version = "0.5.0-rc.2", default-features = false }
