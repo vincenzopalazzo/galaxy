@@ -1,11 +1,15 @@
 <div align="center">
-  <h1>Gralaxy: Observe the lightning network from a better place</h1>
+  <h1>Galaxy: Observe the lightning network from a better place</h1>
   
-  <img src="https://github.com/vincenzopalazzo/galaxy/raw/main/docs/image.png" width="500" />
+  <img src="https://github.com/vincenzopalazzo/galaxy/raw/main/docs/image.png" width="700" />
   
   <p>
     <strong>Galaxy is an architecture to improve the painful API to query lightning network information from a node.</strong>
   </p>
+
+  <span>
+   <img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/vincenzopalazzo/galaxy/Sanity%20Check%20codebase?style=flat-square"/>
+  </span>
 
   <h4>
     <a href="https://github.com/vincenzopalazzo/galaxy">Project Homepage</a>
