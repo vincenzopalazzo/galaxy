@@ -3,28 +3,81 @@
 //! The end goal of this plugin is provide a collection solution
 //! to be able to collect costly information about a lightning network
 //! node and expose this information throgh a minimal interface.
-use clightningrpc_plugin::{commands::RPCCommand, errors::PluginError, plugin::Plugin};
-use clightningrpc_plugin_macros::{add_plugin_rpc, rpc_method};
+use clightningrpc_plugin::{
+    commands::RPCCommand, errors::PluginError, plugin::Plugin, types::LogLevel,
+};
 use serde_json::{json, Value};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::db::GalaxyDB;
 
 #[derive(Clone)]
-pub struct PluginState;
-
-pub fn build_plugin() -> Plugin<PluginState> {
-    let mut plugin = Plugin::new(PluginState {}, true);
-    add_plugin_rpc!(plugin, "galaxy");
-    plugin.clone()
+pub struct PluginState {
+    pub(crate) db: Option<Rc<RefCell<GalaxyDB>>>,
 }
 
-#[rpc_method(
-    rpc_name = "galaxy",
-    description = "This is a simple and short description"
-)]
-pub fn mediator_rpc(_plugin: Plugin<()>, _request: Value) -> Result<Value, PluginState> {
-    /// The name of the parameters can be used only if used, otherwise can be omitted
-    /// the only rules that the macros require is to have a propriety with the following rules:
-    /// - Plugin as _plugin
-    /// - CLN JSON request as _request
-    /// The function parameter can be specified in any order.
-    Ok(json!({"is_dynamic": _plugin.dynamic, "rpc_request": _request}))
+impl PluginState {
+    fn new() -> Self {
+        PluginState { db: None }
+    }
+}
+
+pub fn build_plugin() -> Plugin<PluginState> {
+    Plugin::new(PluginState::new(), true)
+        .on_init(&on_init)
+        .add_rpc_method("galaxy", "", "Galaxy rpc method give you the possibility to query the lightning network graph in a fast way", Galaxy{})
+        .register_notification("shutdown", OnShutdown{})
+        .clone()
+}
+
+/// HelloRPC is used to register the RPC method
+// FIXME: move this inside the macros!
+#[derive(Clone)]
+struct Galaxy;
+
+/// Implementation of the RPC method
+impl RPCCommand<PluginState> for Galaxy {
+    fn call<'c>(
+        &self,
+        plugin: &mut Plugin<PluginState>,
+        _request: &'c Value,
+    ) -> Result<Value, PluginError> {
+        plugin.log(LogLevel::Debug, "call the custom rpc method from rust");
+        let response = json!({
+            "language": "Hello from rust"
+        });
+        Ok(response)
+    }
+}
+
+/// Init method called from the plugin when cln init it
+/// the core of this method is prepare the work directory of galaxy.
+pub fn on_init(plugin: &mut Plugin<PluginState>) -> Value {
+    let dir = plugin
+        .conf
+        .as_ref()
+        .unwrap()
+        .configuration
+        .lightning_dir
+        .as_str();
+    plugin.state.db = Some(Rc::new(RefCell::new(GalaxyDB::new(dir, "galaxy_db"))));
+    json!({})
+}
+
+#[derive(Clone)]
+struct OnShutdown;
+
+impl RPCCommand<PluginState> for OnShutdown {
+    fn call_void<'c>(&self, _plugin: &mut Plugin<PluginState>, _request: &'c Value) {
+        let db = _plugin.state.db.as_ref();
+        if let Some(db) = db {
+            if let Err(err) = db.borrow_mut().close() {
+                _plugin.clone().log(
+                    LogLevel::Debug,
+                    format!("An error happen during the close db operation {}", err).as_str(),
+                );
+            }
+        }
+    }
 }
