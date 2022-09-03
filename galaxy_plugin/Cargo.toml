@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 clightningrpc-common = "0.3.0-beta.2"
-clightningrpc-plugin = { path = "../../rust-clightning-rpc/plugin" }
+clightningrpc-plugin = "0.3.0-beta.5"
 clightningrpc-plugin-macros = "0.3.0-beta.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

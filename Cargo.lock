@@ -176,18 +176,9 @@ dependencies = [
 
 [[package]]
 name = "clightningrpc-plugin"
-version = "0.3.0-beta.4"
-dependencies = [
- "clightningrpc-common",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "clightningrpc-plugin"
-version = "0.3.0-beta.4"
+version = "0.3.0-beta.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "420dda027260b2993e382d265ae2ec0504af53b1c9aebe0a23bffeadf122387a"
+checksum = "07d451044f60c2564c0421ae84e3fcd075aaa48f13274c159ca62498ff59316f"
 dependencies = [
  "clightningrpc-common",
  "serde",
@@ -200,7 +191,7 @@ version = "0.3.0-beta.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "030e95ff3bae80483207e97d9744675af16c10e9e466a0ac5db5133c1ddfb858"
 dependencies = [
- "clightningrpc-plugin 0.3.0-beta.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "clightningrpc-plugin",
  "convert_case",
  "darling",
  "quote",
@@ -539,7 +530,7 @@ name = "galaxy_plugin"
 version = "0.0.1"
 dependencies = [
  "clightningrpc-common",
- "clightningrpc-plugin 0.3.0-beta.4",
+ "clightningrpc-plugin",
  "clightningrpc-plugin-macros",
  "rusty-leveldb",
  "serde",
