@@ -11,6 +11,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::db::GalaxyDB;
+use crate::plugin_mediator::{GalaxyCommand, GalaxyMediator};
 
 #[derive(Clone)]
 pub struct PluginState {
@@ -44,10 +45,11 @@ impl RPCCommand<PluginState> for Galaxy {
         _request: &'c Value,
     ) -> Result<Value, PluginError> {
         plugin.log(LogLevel::Debug, "call the custom rpc method from rust");
-        let response = json!({
-            "language": "Hello from rust"
-        });
-        Ok(response)
+        let cmd = _request.get("cmd").unwrap();
+        match GalaxyMediator::dispach::<Value>(&GalaxyCommand::GetNode("".to_string())) {
+            Ok(_) => Ok(json!({})),
+            Err(err) => Err(err),
+        }
     }
 }
 
